@@ -172,6 +172,12 @@ _lazy_imports: dict[str, str] = {
     "BetaAsyncMessageStreamManager": ".lib.streaming",
 }
 
+def __dir__() -> list[str]:
+    return sorted(
+        set(globals().keys())
+            .union(_lazy_imports.keys())
+    )
+
 import importlib as _importlib
 
 def __getattr__(name: str) -> object:
