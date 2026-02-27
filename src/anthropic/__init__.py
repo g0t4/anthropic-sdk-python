@@ -99,10 +99,22 @@ if not _t.TYPE_CHECKING:
     from ._utils._resources_proxy import resources as resources
 
 if _t.TYPE_CHECKING:
+    # * eager load for type checking
+
+    # FYI each original import is marked, i.e.:
+    # from .lib.tools import beta_tool, beta_async_tool
     from .lib.tools import beta_tool as beta_tool, beta_async_tool as beta_async_tool
+
+    # from .lib.vertex import *
     from .lib.vertex import AnthropicVertex as AnthropicVertex, AsyncAnthropicVertex as AsyncAnthropicVertex
+
+    # from .lib.bedrock import *
     from .lib.bedrock import AnthropicBedrock as AnthropicBedrock, AsyncAnthropicBedrock as AsyncAnthropicBedrock
+
+    # from .lib.foundry import AnthropicFoundry as AnthropicFoundry, AsyncAnthropicFoundry as AsyncAnthropicFoundry
     from .lib.foundry import AnthropicFoundry as AnthropicFoundry, AsyncAnthropicFoundry as AsyncAnthropicFoundry
+
+    # from .lib.streaming import *
     from .lib.streaming import (
         TextEvent as TextEvent,
         InputJsonEvent as InputJsonEvent,
@@ -131,20 +143,25 @@ if _t.TYPE_CHECKING:
         BetaAsyncMessageStreamManager as BetaAsyncMessageStreamManager,
     )
 
+# * lazy load at runtime
 _lazy_imports: dict[str, str] = {
-    # .lib.tools
+    # from .lib.tools import beta_tool, beta_async_tool
     "beta_tool": ".lib.tools",
     "beta_async_tool": ".lib.tools",
-    # .lib.vertex
+
+    # from .lib.vertex import *
     "AnthropicVertex": ".lib.vertex",
     "AsyncAnthropicVertex": ".lib.vertex",
-    # .lib.bedrock
+
+    # from .lib.bedrock import *
     "AnthropicBedrock": ".lib.bedrock",
     "AsyncAnthropicBedrock": ".lib.bedrock",
-    # .lib.foundry
+
+    # from .lib.foundry import AnthropicFoundry as AnthropicFoundry, AsyncAnthropicFoundry as AsyncAnthropicFoundry
     "AnthropicFoundry": ".lib.foundry",
     "AsyncAnthropicFoundry": ".lib.foundry",
-    # .lib.streaming
+
+    # from .lib.streaming import *
     "TextEvent": ".lib.streaming",
     "InputJsonEvent": ".lib.streaming",
     "MessageStopEvent": ".lib.streaming",
