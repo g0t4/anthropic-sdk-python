@@ -98,11 +98,89 @@ __all__ = [
 if not _t.TYPE_CHECKING:
     from ._utils._resources_proxy import resources as resources
 
-from .lib.tools import beta_tool, beta_async_tool
-from .lib.vertex import *
-from .lib.bedrock import *
-from .lib.foundry import AnthropicFoundry as AnthropicFoundry, AsyncAnthropicFoundry as AsyncAnthropicFoundry
-from .lib.streaming import *
+if _t.TYPE_CHECKING:
+    from .lib.tools import beta_tool as beta_tool, beta_async_tool as beta_async_tool
+    from .lib.vertex import AnthropicVertex as AnthropicVertex, AsyncAnthropicVertex as AsyncAnthropicVertex
+    from .lib.bedrock import AnthropicBedrock as AnthropicBedrock, AsyncAnthropicBedrock as AsyncAnthropicBedrock
+    from .lib.foundry import AnthropicFoundry as AnthropicFoundry, AsyncAnthropicFoundry as AsyncAnthropicFoundry
+    from .lib.streaming import (
+        TextEvent as TextEvent,
+        InputJsonEvent as InputJsonEvent,
+        MessageStopEvent as MessageStopEvent,
+        MessageStreamEvent as MessageStreamEvent,
+        ContentBlockStopEvent as ContentBlockStopEvent,
+        ParsedMessageStopEvent as ParsedMessageStopEvent,
+        ParsedMessageStreamEvent as ParsedMessageStreamEvent,
+        ParsedContentBlockStopEvent as ParsedContentBlockStopEvent,
+        MessageStream as MessageStream,
+        AsyncMessageStream as AsyncMessageStream,
+        MessageStreamManager as MessageStreamManager,
+        AsyncMessageStreamManager as AsyncMessageStreamManager,
+        BetaInputJsonEvent as BetaInputJsonEvent,
+        ParsedBetaTextEvent as ParsedBetaTextEvent,
+        ParsedBetaMessageStopEvent as ParsedBetaMessageStopEvent,
+        ParsedBetaMessageStreamEvent as ParsedBetaMessageStreamEvent,
+        ParsedBetaContentBlockStopEvent as ParsedBetaContentBlockStopEvent,
+        BetaTextEvent as BetaTextEvent,
+        BetaMessageStopEvent as BetaMessageStopEvent,
+        BetaMessageStreamEvent as BetaMessageStreamEvent,
+        BetaContentBlockStopEvent as BetaContentBlockStopEvent,
+        BetaMessageStream as BetaMessageStream,
+        BetaAsyncMessageStream as BetaAsyncMessageStream,
+        BetaMessageStreamManager as BetaMessageStreamManager,
+        BetaAsyncMessageStreamManager as BetaAsyncMessageStreamManager,
+    )
+
+_lazy_imports: dict[str, str] = {
+    # .lib.tools
+    "beta_tool": ".lib.tools",
+    "beta_async_tool": ".lib.tools",
+    # .lib.vertex
+    "AnthropicVertex": ".lib.vertex",
+    "AsyncAnthropicVertex": ".lib.vertex",
+    # .lib.bedrock
+    "AnthropicBedrock": ".lib.bedrock",
+    "AsyncAnthropicBedrock": ".lib.bedrock",
+    # .lib.foundry
+    "AnthropicFoundry": ".lib.foundry",
+    "AsyncAnthropicFoundry": ".lib.foundry",
+    # .lib.streaming
+    "TextEvent": ".lib.streaming",
+    "InputJsonEvent": ".lib.streaming",
+    "MessageStopEvent": ".lib.streaming",
+    "MessageStreamEvent": ".lib.streaming",
+    "ContentBlockStopEvent": ".lib.streaming",
+    "ParsedMessageStopEvent": ".lib.streaming",
+    "ParsedMessageStreamEvent": ".lib.streaming",
+    "ParsedContentBlockStopEvent": ".lib.streaming",
+    "MessageStream": ".lib.streaming",
+    "AsyncMessageStream": ".lib.streaming",
+    "MessageStreamManager": ".lib.streaming",
+    "AsyncMessageStreamManager": ".lib.streaming",
+    "BetaInputJsonEvent": ".lib.streaming",
+    "ParsedBetaTextEvent": ".lib.streaming",
+    "ParsedBetaMessageStopEvent": ".lib.streaming",
+    "ParsedBetaMessageStreamEvent": ".lib.streaming",
+    "ParsedBetaContentBlockStopEvent": ".lib.streaming",
+    "BetaTextEvent": ".lib.streaming",
+    "BetaMessageStopEvent": ".lib.streaming",
+    "BetaMessageStreamEvent": ".lib.streaming",
+    "BetaContentBlockStopEvent": ".lib.streaming",
+    "BetaMessageStream": ".lib.streaming",
+    "BetaAsyncMessageStream": ".lib.streaming",
+    "BetaMessageStreamManager": ".lib.streaming",
+    "BetaAsyncMessageStreamManager": ".lib.streaming",
+}
+
+import importlib as _importlib
+
+def __getattr__(name: str) -> object:
+    if name in _lazy_imports:
+        module = _importlib.import_module(_lazy_imports[name], __spec__.parent)
+        value = getattr(module, name)
+        globals()[name] = value
+        return value
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 _setup_logging()
 
@@ -115,6 +193,7 @@ for __name in __all__:
     if not __name.startswith("__"):
         try:
             __locals[__name].__module__ = "anthropic"
-        except (TypeError, AttributeError):
+        except (TypeError, AttributeError, KeyError):
             # Some of our exported symbols are builtins which we can't set attributes for.
+            # KeyError for lazy-loaded symbols not yet in locals.
             pass
