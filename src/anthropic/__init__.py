@@ -201,6 +201,10 @@ def __getattr__(name: str) -> object:
         import importlib
         module = importlib.import_module(_lazy_imports[name], __spec__.parent)
         value = getattr(module, name)
+        try:
+            value.__module__ = "anthropic"
+        except (TypeError, AttributeError):
+            pass
         globals()[name] = value
         return value
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
@@ -218,5 +222,5 @@ for __name in __all__:
             __locals[__name].__module__ = "anthropic"
         except (TypeError, AttributeError, KeyError):
             # Some of our exported symbols are builtins which we can't set attributes for.
-            # KeyError for lazy-loaded symbols not yet in locals.
+            # KeyError for lazy-loaded symbols (listed in __all__) but not yet loaded (into locals).
             pass
