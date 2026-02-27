@@ -195,11 +195,11 @@ def __dir__() -> list[str]:
             .union(_lazy_imports.keys())
     )
 
-import importlib as _importlib
 
 def __getattr__(name: str) -> object:
     if name in _lazy_imports:
-        module = _importlib.import_module(_lazy_imports[name], __spec__.parent)
+        import importlib
+        module = importlib.import_module(_lazy_imports[name], __spec__.parent)
         value = getattr(module, name)
         globals()[name] = value
         return value
