@@ -13,7 +13,7 @@ from ...types.message import Message
 from ...types.parsed_message import ParsedMessage, ParsedTextBlock, ParsedContentBlock
 if TYPE_CHECKING:
     from ...types.beta.beta_message import BetaMessage
-    from ...types.beta.parsed_beta_message import ParsedBetaMessage, ParsedBetaTextBlock, ParsedBetaContentBlock
+    from ...types.beta.parsed_beta_message import ParsedBetaMessage, ParsedBetaContentBlock
 else:
     _lazy_from_imports.update({
         "BetaMessage": "...types.beta.beta_message",
@@ -40,6 +40,7 @@ def parse_beta_response(
     content_list: list[ParsedBetaContentBlock[ResponseFormatT]] = []
     for content in response.content:
         if content.type == "text":
+            from ...types.beta.parsed_beta_message import ParsedBetaTextBlock
             content_list.append(
                 construct_type_unchecked(
                     type_=ParsedBetaTextBlock[ResponseFormatT],
@@ -49,6 +50,7 @@ def parse_beta_response(
         else:
             content_list.append(content)  # type: ignore
 
+    from ...types.beta.parsed_beta_message import ParsedBetaMessage
     return construct_type_unchecked(
         type_=ParsedBetaMessage[ResponseFormatT],
         value={
