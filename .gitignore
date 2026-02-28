@@ -13,3 +13,6 @@ dist
 .envrc
 codegen.log
 Brewfile.lock.json
+
+# test code / outputs for optimizations
+testing/
