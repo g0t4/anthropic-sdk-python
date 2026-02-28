@@ -2,6 +2,52 @@
 
 import typing as _t
 
+# * lazy load at runtime
+_lazy_imports: dict[str, str] = {
+    # from .lib.tools import beta_tool, beta_async_tool
+    "beta_tool": ".lib.tools",
+    "beta_async_tool": ".lib.tools",
+
+    # from .lib.vertex import *
+    "AnthropicVertex": ".lib.vertex",
+    "AsyncAnthropicVertex": ".lib.vertex",
+
+    # from .lib.bedrock import *
+    "AnthropicBedrock": ".lib.bedrock",
+    "AsyncAnthropicBedrock": ".lib.bedrock",
+
+    # from .lib.foundry import AnthropicFoundry as AnthropicFoundry, AsyncAnthropicFoundry as AsyncAnthropicFoundry
+    "AnthropicFoundry": ".lib.foundry",
+    "AsyncAnthropicFoundry": ".lib.foundry",
+
+    # from .lib.streaming import *
+    "TextEvent": ".lib.streaming",
+    "InputJsonEvent": ".lib.streaming",
+    "MessageStopEvent": ".lib.streaming",
+    "MessageStreamEvent": ".lib.streaming",
+    "ContentBlockStopEvent": ".lib.streaming",
+    "ParsedMessageStopEvent": ".lib.streaming",
+    "ParsedMessageStreamEvent": ".lib.streaming",
+    "ParsedContentBlockStopEvent": ".lib.streaming",
+    "MessageStream": ".lib.streaming",
+    "AsyncMessageStream": ".lib.streaming",
+    "MessageStreamManager": ".lib.streaming",
+    "AsyncMessageStreamManager": ".lib.streaming",
+    "BetaInputJsonEvent": ".lib.streaming",
+    "ParsedBetaTextEvent": ".lib.streaming",
+    "ParsedBetaMessageStopEvent": ".lib.streaming",
+    "ParsedBetaMessageStreamEvent": ".lib.streaming",
+    "ParsedBetaContentBlockStopEvent": ".lib.streaming",
+    "BetaTextEvent": ".lib.streaming",
+    "BetaMessageStopEvent": ".lib.streaming",
+    "BetaMessageStreamEvent": ".lib.streaming",
+    "BetaContentBlockStopEvent": ".lib.streaming",
+    "BetaMessageStream": ".lib.streaming",
+    "BetaAsyncMessageStream": ".lib.streaming",
+    "BetaMessageStreamManager": ".lib.streaming",
+    "BetaAsyncMessageStreamManager": ".lib.streaming",
+}
+
 from . import types
 from ._types import NOT_GIVEN, Omit, NoneType, NotGiven, Transport, ProxiesTypes, omit, not_given
 from ._utils import file_from_path
@@ -143,51 +189,6 @@ if _t.TYPE_CHECKING:
         BetaAsyncMessageStreamManager as BetaAsyncMessageStreamManager,
     )
 
-# * lazy load at runtime
-_lazy_imports: dict[str, str] = {
-    # from .lib.tools import beta_tool, beta_async_tool
-    "beta_tool": ".lib.tools",
-    "beta_async_tool": ".lib.tools",
-
-    # from .lib.vertex import *
-    "AnthropicVertex": ".lib.vertex",
-    "AsyncAnthropicVertex": ".lib.vertex",
-
-    # from .lib.bedrock import *
-    "AnthropicBedrock": ".lib.bedrock",
-    "AsyncAnthropicBedrock": ".lib.bedrock",
-
-    # from .lib.foundry import AnthropicFoundry as AnthropicFoundry, AsyncAnthropicFoundry as AsyncAnthropicFoundry
-    "AnthropicFoundry": ".lib.foundry",
-    "AsyncAnthropicFoundry": ".lib.foundry",
-
-    # from .lib.streaming import *
-    "TextEvent": ".lib.streaming",
-    "InputJsonEvent": ".lib.streaming",
-    "MessageStopEvent": ".lib.streaming",
-    "MessageStreamEvent": ".lib.streaming",
-    "ContentBlockStopEvent": ".lib.streaming",
-    "ParsedMessageStopEvent": ".lib.streaming",
-    "ParsedMessageStreamEvent": ".lib.streaming",
-    "ParsedContentBlockStopEvent": ".lib.streaming",
-    "MessageStream": ".lib.streaming",
-    "AsyncMessageStream": ".lib.streaming",
-    "MessageStreamManager": ".lib.streaming",
-    "AsyncMessageStreamManager": ".lib.streaming",
-    "BetaInputJsonEvent": ".lib.streaming",
-    "ParsedBetaTextEvent": ".lib.streaming",
-    "ParsedBetaMessageStopEvent": ".lib.streaming",
-    "ParsedBetaMessageStreamEvent": ".lib.streaming",
-    "ParsedBetaContentBlockStopEvent": ".lib.streaming",
-    "BetaTextEvent": ".lib.streaming",
-    "BetaMessageStopEvent": ".lib.streaming",
-    "BetaMessageStreamEvent": ".lib.streaming",
-    "BetaContentBlockStopEvent": ".lib.streaming",
-    "BetaMessageStream": ".lib.streaming",
-    "BetaAsyncMessageStream": ".lib.streaming",
-    "BetaMessageStreamManager": ".lib.streaming",
-    "BetaAsyncMessageStreamManager": ".lib.streaming",
-}
 
 def __dir__() -> list[str]:
     return sorted(
