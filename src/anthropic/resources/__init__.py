@@ -78,14 +78,10 @@ def __getattr__(name: str) -> object:
         return module
 
     if name in _lazy_from_imports:
-        import importlib 
+        import importlib
         # lazy loaded attrs on a module:
         module = importlib.import_module(_lazy_from_imports[name], __spec__.parent)
         value = getattr(module, name)
-        try:
-            value.__module__ = "anthropic"
-        except (TypeError, AttributeError):
-            pass
         globals()[name] = value
         return value
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
