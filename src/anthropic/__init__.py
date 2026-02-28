@@ -49,7 +49,21 @@ _lazy_imports: dict[str, str] = {
 }
 
 from . import types
-from ._types import NOT_GIVEN, Omit, NoneType, NotGiven, Transport, ProxiesTypes, omit, not_given
+
+if _t.TYPE_CHECKING:
+    from ._types import NOT_GIVEN, Omit, NoneType, NotGiven, Transport, ProxiesTypes, omit, not_given
+else:
+    _lazy_imports.update({
+        "NOT_GIVEN": "._types",
+        "Omit": "._types",
+        "NoneType": "._types",
+        "NotGiven": "._types",
+        "Transport": "._types",
+        "ProxiesTypes": "._types",
+        "omit": "._types",
+        "not_given": "._types",
+    })
+
 from ._utils import file_from_path
 from ._client import (
     Client,
