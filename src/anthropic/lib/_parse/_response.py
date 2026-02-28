@@ -1,4 +1,8 @@
 from __future__ import annotations
+from typing import TYPE_CHECKING
+
+_lazy_from_imports: dict[str, str] = {}
+_lazy_module_imports: dict[str, str] = {}
 
 from typing_extensions import TypeVar
 
@@ -7,8 +11,16 @@ from ..._models import TypeAdapter, construct_type_unchecked
 from ..._utils._utils import is_given
 from ...types.message import Message
 from ...types.parsed_message import ParsedMessage, ParsedTextBlock, ParsedContentBlock
-from ...types.beta.beta_message import BetaMessage
-from ...types.beta.parsed_beta_message import ParsedBetaMessage, ParsedBetaTextBlock, ParsedBetaContentBlock
+if TYPE_CHECKING:
+    from ...types.beta.beta_message import BetaMessage
+    from ...types.beta.parsed_beta_message import ParsedBetaMessage, ParsedBetaTextBlock, ParsedBetaContentBlock
+else:
+    _lazy_from_imports.update({
+        "BetaMessage": "...types.beta.beta_message",
+        "ParsedBetaMessage": "...types.beta.parsed_beta_message",
+        "ParsedBetaTextBlock": "...types.beta.parsed_beta_message",
+        "ParsedBetaContentBlock": "...types.beta.parsed_beta_message",
+    })
 
 ResponseFormatT = TypeVar("ResponseFormatT", default=None)
 
@@ -70,3 +82,27 @@ def parse_response(
             "content": content_list,
         },
     )
+
+
+def __dir__() -> list[str]:
+    return sorted(
+        set(globals().keys())
+            .union(_lazy_from_imports.keys())
+    )
+
+
+def __getattr__(name: str) -> object:
+    if name in _lazy_module_imports:
+        import importlib
+        module = importlib.import_module(_lazy_module_imports[name], __spec__.parent)
+        globals()[name] = module
+        return module
+
+    if name in _lazy_from_imports:
+        import importlib
+        # lazy loaded attrs on a module:
+        module = importlib.import_module(_lazy_from_imports[name], __spec__.parent)
+        value = getattr(module, name)
+        globals()[name] = value
+        return value
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
