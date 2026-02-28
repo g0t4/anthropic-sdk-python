@@ -3,7 +3,7 @@
 import typing as _t
 
 # * lazy load at runtime
-_lazy_imports: dict[str, str] = {
+_lazy_from_imports: dict[str, str] = {
     # from .lib.tools import beta_tool, beta_async_tool
     "beta_tool": ".lib.tools",
     "beta_async_tool": ".lib.tools",
@@ -53,7 +53,7 @@ if _t.TYPE_CHECKING:
     from . import types
     from ._types import NOT_GIVEN, Omit, NoneType, NotGiven, Transport, ProxiesTypes, omit, not_given
 else:
-    _lazy_imports.update({
+    _lazy_from_imports.update({
         "types": ".",
 
         "NOT_GIVEN": "._types",
@@ -209,14 +209,14 @@ if _t.TYPE_CHECKING:
 def __dir__() -> list[str]:
     return sorted(
         set(globals().keys())
-            .union(_lazy_imports.keys())
+            .union(_lazy_from_imports.keys())
     )
 
 
 def __getattr__(name: str) -> object:
-    if name in _lazy_imports:
+    if name in _lazy_from_imports:
         import importlib
-        where = _lazy_imports[name]
+        where = _lazy_from_imports[name]
         if where == ".":
             # lazy loaded modules:
             value = importlib.import_module(f".{name}", __spec__.parent)
