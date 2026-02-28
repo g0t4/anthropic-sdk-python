@@ -48,12 +48,14 @@ _lazy_imports: dict[str, str] = {
     "BetaAsyncMessageStreamManager": ".lib.streaming",
 }
 
-from . import types
 
 if _t.TYPE_CHECKING:
+    from . import types
     from ._types import NOT_GIVEN, Omit, NoneType, NotGiven, Transport, ProxiesTypes, omit, not_given
 else:
     _lazy_imports.update({
+        "types": ".",
+
         "NOT_GIVEN": "._types",
         "Omit": "._types",
         "NoneType": "._types",
@@ -214,8 +216,17 @@ def __dir__() -> list[str]:
 def __getattr__(name: str) -> object:
     if name in _lazy_imports:
         import importlib
-        module = importlib.import_module(_lazy_imports[name], __spec__.parent)
-        value = getattr(module, name)
+        where = _lazy_imports[name]
+        if where == ".":
+            # lazy loaded modules:
+            value = importlib.import_module(f".{name}", __spec__.parent)
+            # PRN add nested modules too? perhaps? endswith(".") or a separate list?
+            #   or maybe it should be ends with "." for attrs on a module (next case)? 
+            #   ? value = importlib.import_module(f"{where}{name}", __spec__.parent)
+        else:
+            # lazy loaded attrs on a module:
+            module = importlib.import_module(where, __spec__.parent)
+            value = getattr(module, name)
         try:
             value.__module__ = "anthropic"
         except (TypeError, AttributeError):
