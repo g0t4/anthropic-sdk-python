@@ -1,15 +1,28 @@
 # File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
+from typing import TYPE_CHECKING
+
 _lazy_from_imports: dict[str, str] = {}
 _lazy_module_imports: dict[str, str] = {}
 
-from .beta import (
-    Beta,
-    AsyncBeta,
-    BetaWithRawResponse,
-    AsyncBetaWithRawResponse,
-    BetaWithStreamingResponse,
-    AsyncBetaWithStreamingResponse,
-)
+if TYPE_CHECKING:
+    from .beta import (
+        Beta,
+        AsyncBeta,
+        BetaWithRawResponse,
+        AsyncBetaWithRawResponse,
+        BetaWithStreamingResponse,
+        AsyncBetaWithStreamingResponse,
+    )
+else:
+    _lazy_from_imports.update({
+        "Beta": "beta",
+        "AsyncBeta": "beta",
+        "BetaWithRawResponse": "beta",
+        "AsyncBetaWithRawResponse": "beta",
+        "BetaWithStreamingResponse": "beta",
+        "AsyncBetaWithStreamingResponse": "beta",
+    })
+
 from .models import (
     Models,
     AsyncModels,
